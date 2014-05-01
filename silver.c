@@ -5,7 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#define bmarks "/home/spk/bookmarks.txt"
+#include "config.h"
 
 void matches(char *tag);
 
@@ -71,7 +71,7 @@ searchTag(const char *tag)
 	char line[LINE_MAX];
 	FILE *fl;
 	
-	fl = fopen(bmarks, "r");
+	fl = fopen(BOOKMARKS, "r");
 	if (!fl)
 		warn("%p", fl);
 	while(fgets(line, sizeof(line), fl) != NULL) {

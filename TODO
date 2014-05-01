@@ -1,6 +1,8 @@
 * Write a function that counts number of matches (-n)
 * add a @ to the beginning of the searched tag (tag -> @tag) pipe output to
   dmenu(1)
+
+* Write a function that searches for a tag (-s)
 * Write a function that adds a new bookmark (-a)
 * Write a function that removes an existing bookmark (-d)
 * Write a function that shows all unique tags
