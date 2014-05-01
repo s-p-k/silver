@@ -9,7 +9,7 @@
 
 void matches(char *tag);
 
-/* void searchTag(const char *tag);
+/* void searchTag(const char *tag); */
 
 int countMarks(char *fname, char *str);
 
