@@ -38,12 +38,12 @@ main(int argc, char *argv[])
 		case 'h':
 			hflag = 1;
 			break;
-		case 'n':
-			nflag = 1;
-			tag = optarg;
-			break;
 		case 'c':
 			cflag = 1;
+			tag = optarg;
+			break;
+		case 'n':
+			nflag = 1;
 			tag = optarg;
 			break;
 		case 's':
@@ -92,10 +92,8 @@ countMarks(char *fname, char *str)
 		return(-1);
 
 	while(fgets(temp, 512, fp) != NULL) {
-		if((strstr(temp, str)) != NULL) {
+		if((strstr(temp, str)) != NULL)
 			found++;
-			printf("\n%s\n", temp);
-		}
 		nl++;
 	}
 
