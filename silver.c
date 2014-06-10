@@ -13,6 +13,10 @@ int searchTag(char *fname, char *str);
 
 int countMarks(char *fname, char *str);
 
+int charPosition(char *str);
+
+void partOfString(char *str, int position);
+
 void
 usage(const char *arg)
 {
@@ -64,13 +68,11 @@ main(int argc, char *argv[])
 		if(result == -1)
 			return(EXIT_FAILURE);
 	}
-
 	if (sflag) {
 		result = searchTag(BOOKMARKS, argv[2]);
 		if(result == -1)
 			return(EXIT_FAILURE);
 	}
-
 	return EXIT_SUCCESS;
 }
 
@@ -104,21 +106,50 @@ countMarks(char *fname, char *str)
 }
 
 int
+charPosition(char *str)
+{
+	char c = ':';
+	int position = 0;
+	int i, l;
+
+	l = strlen(str);
+	for (i = 0; i <= l; i++) {
+		if (str[i] == c)
+			break;
+		position++;
+	}
+	return position + 2;
+}
+
+void
+partOfString(char *str, int position)
+{
+	int l = strlen(str);
+	int i;
+
+	for (i = position; i <= l; i++)
+		printf("%c", str[i]);
+	return;
+}
+
+int
 searchTag(char *fname, char *str)
 {
 
 	FILE *fp;
 	char temp[512];
+	int c;
+	char *s = temp;
 
 	if((fp = fopen(fname, "r")) == NULL)
 		return(-1);
 
 	while(fgets(temp, 512, fp) != NULL) {
-		if((strstr(temp, str)) != NULL)
-			/* We need to show the link only, not the whole line */
-			printf("\n%s", temp);
+		if((strstr(temp, str)) != NULL) {
+			c = charPosition(temp);
+			partOfString(s, c);
+		}
 	}
 	fclose(fp);
-
 	return(EXIT_SUCCESS);
 }
