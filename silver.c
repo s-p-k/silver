@@ -20,7 +20,7 @@ void partOfString(char *str, int position);
 void
 usage(const char *arg)
 {
-	printf("Usage: %s [-h] [-c tag]\n", arg);
+	printf("Usage: %s [-h] [-c tag] [-s tag]\n", arg);
 
 }
 
