@@ -9,9 +9,9 @@
 
 void matches(char *tag);
 
-int searchTag(char *fname, char *str);
+void searchTag(char *fname, char *str);
 
-int countMarks(char *fname, char *str);
+void countMarks(char *fname, char *str);
 
 int charPosition(char *str);
 
@@ -28,7 +28,7 @@ int
 main(int argc, char *argv[])
 {
 
-	int opt, result;
+	int opt;
 	int hflag = 0, cflag = 0, nflag = 0, sflag = 0;
 	char *tag;
 
@@ -55,7 +55,7 @@ main(int argc, char *argv[])
 			tag = optarg;
 			break;
 		default:
-			errx(EXIT_FAILURE, "see %s -h", argv[0]);		
+			errx(EXIT_FAILURE, "see %s -h", argv[0]);
 		}
 	}
 
@@ -64,14 +64,16 @@ main(int argc, char *argv[])
 	if (nflag)
 		matches(tag);
 	if (cflag) {
-		result = countMarks(BOOKMARKS, argv[2]);
-		if(result == -1)
+		if (argc <= 2) {
+			usage(argv[0]);
 			return(EXIT_FAILURE);
+		}
+		countMarks(BOOKMARKS, argv[2]);
+		return(EXIT_SUCCESS);
 	}
 	if (sflag) {
-		result = searchTag(BOOKMARKS, argv[2]);
-		if(result == -1)
-			return(EXIT_FAILURE);
+		searchTag(BOOKMARKS, argv[2]);
+		return(EXIT_SUCCESS);
 	}
 	return EXIT_SUCCESS;
 }
@@ -82,7 +84,7 @@ matches(char *tag)
 	printf("not yet implemented %s\n", tag);
 }
 
-int
+void
 countMarks(char *fname, char *str)
 {
 	FILE *fp;
@@ -91,7 +93,7 @@ countMarks(char *fname, char *str)
 	char temp[512];
 	
 	if((fp = fopen(fname, "r")) == NULL)
-		return(-1);
+		err(1, "%s", fname);
 
 	while(fgets(temp, 512, fp) != NULL) {
 		if((strstr(temp, str)) != NULL)
@@ -102,7 +104,7 @@ countMarks(char *fname, char *str)
 	printf("%d\n", found);
 	fclose(fp);
 
-	return(EXIT_SUCCESS);
+	return;
 }
 
 int
@@ -132,7 +134,7 @@ partOfString(char *str, int position)
 	return;
 }
 
-int
+void
 searchTag(char *fname, char *str)
 {
 
@@ -142,7 +144,7 @@ searchTag(char *fname, char *str)
 	char *s = temp;
 
 	if((fp = fopen(fname, "r")) == NULL)
-		return(-1);
+		err(1, "%s", fname);
 
 	while(fgets(temp, 512, fp) != NULL) {
 		if((strstr(temp, str)) != NULL) {
@@ -151,5 +153,5 @@ searchTag(char *fname, char *str)
 		}
 	}
 	fclose(fp);
-	return(EXIT_SUCCESS);
+	return;
 }
