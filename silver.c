@@ -4,14 +4,15 @@
 #include <limits.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #include "config.h"
 
-void matches(char *tag);
+void prinTags(char *fname);
 
 void searchTag(char *fname, char *str);
 
-void countMarks(char *fname, char *str);
+void countMarks(char *fname);
 
 int charPosition(char *str);
 
@@ -20,8 +21,7 @@ void partOfString(char *str, int position);
 void
 usage(const char *arg)
 {
-	printf("Usage: %s [-h] [-c tag] [-s tag]\n", arg);
-
+	printf("Usage: %s [-h] [-n] [-c tag] [-s tag]\n", arg);
 }
 
 int
@@ -29,7 +29,7 @@ main(int argc, char *argv[])
 {
 
 	int opt;
-	int hflag = 0, cflag = 0, nflag = 0, sflag = 0;
+	int hflag = 0, /* cflag = 0, */ nflag = 0, pflag = 0, sflag = 0;
 	char *tag;
 
 	if (argc == 1) {
@@ -37,22 +37,24 @@ main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 	
-	while ((opt = getopt(argc, argv, "cns:h")) != -1) {
+	while ((opt = getopt(argc, argv, "cns:nhp")) != -1) {
 		switch (opt) {
 		case 'h':
 			hflag = 1;
 			break;
-		case 'c':
-			cflag = 1;
-			tag = optarg;
-			break;
+		/* case 'c': */
+		/* 	cflag = 1; */
+		/* 	tag = optarg; */
+		/* 	break; */
 		case 'n':
 			nflag = 1;
-			tag = optarg;
 			break;
 		case 's':
 			sflag = 1;
 			tag = optarg;
+			break;
+		case 'p':
+			pflag = 1;
 			break;
 		default:
 			errx(EXIT_FAILURE, "see %s -h", argv[0]);
@@ -61,47 +63,66 @@ main(int argc, char *argv[])
 
 	if (hflag)
 		usage(argv[0]);
-	if (nflag)
-		matches(tag);
-	if (cflag) {
-		if (argc <= 2) {
-			usage(argv[0]);
-			return(EXIT_FAILURE);
-		}
-		countMarks(BOOKMARKS, argv[2]);
-		return(EXIT_SUCCESS);
-	}
+	/* if (cflag) { */
+	/* 	if (argc <= 2) { */
+	/* 		usage(argv[0]); */
+	/* 		return(EXIT_FAILURE); */
+	/* 	} */
+		/* countMarks(BOOKMARKS, argv[2]); */
+	/* 	countMarks(BOOKMARKS); */
+	/* 	return(EXIT_SUCCESS); */
+	/* } */
 	if (sflag) {
-		searchTag(BOOKMARKS, argv[2]);
+		searchTag(BOOKMARKS, tag);
 		return(EXIT_SUCCESS);
 	}
-	return EXIT_SUCCESS;
+	if (pflag) {
+		prinTags(BOOKMARKS);
+		return(EXIT_SUCCESS);
+	}
+	if (nflag)
+		countMarks(BOOKMARKS);
+	return(EXIT_SUCCESS);
 }
 
 void
-matches(char *tag)
-{
-	printf("not yet implemented %s\n", tag);
-}
-
-void
-countMarks(char *fname, char *str)
+prinTags(char *fname)
 {
 	FILE *fp;
-	int nl = 1;
-	int found = 0;
-	char temp[512];
-	
-	if((fp = fopen(fname, "r")) == NULL)
+	int ch;
+
+	if (!(fp = fopen(fname, "r")))
 		err(1, "%s", fname);
-
-	while(fgets(temp, 512, fp) != NULL) {
-		if((strstr(temp, str)) != NULL)
-			found++;
-		nl++;
+	(ch = fgetc(fp));
+	while (ch != EOF) {
+		/* putchar(ch); */
+		if (ch == '\n') {
+			ch = fgetc(fp);
+			continue;
+		}
+		if (ch == '@')
+			printf("duck\n");
+		ch = fgetc(fp);
 	}
+	return;
+}
 
-	printf("%d\n", found);
+void
+countMarks(char *fname)
+{
+	FILE *fp;
+	int found = 0;
+	int ch;
+	
+	if(!(fp = fopen(fname, "r")))
+		err(1, "%s", fname);
+	(ch = fgetc(fp));
+	while (ch != EOF) {
+		if (ch == '@')
+			found++;
+		ch = fgetc(fp);
+	}
+        printf("%d\n", found);
 	fclose(fp);
 
 	return;
@@ -143,7 +164,7 @@ searchTag(char *fname, char *str)
 	int c;
 	char *s = temp;
 
-	if((fp = fopen(fname, "r")) == NULL)
+	if(!(fp = fopen(fname, "r")))
 		err(1, "%s", fname);
 
 	while(fgets(temp, 512, fp) != NULL) {
